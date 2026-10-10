@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedPulse | Hospital Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --primary-light: #e0f2fe;
+            --secondary: #0f172a;
+            --accent: #0ea5e9;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --success-light: #dcfce7;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --purple: #7c3aed;
+            --purple-light: #ede9fe;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navigation Header */
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.85rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+        }
+        .brand-text h1 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .brand-text p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .badge-rdbms {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 1px solid #cbd5e1;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .live-tag {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--success);
+            background: var(--success-light);
+            padding: 0.3rem 0.75rem;
+            border-radius: 9999px;
+        }
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        /* Layout Container */
+        .container {
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Top Metric Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.4rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.6rem;
+        }
+        .kpi-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+        .kpi-icon {
+            font-size: 1.2rem;
+            padding: 0.4rem;
+            border-radius: 8px;
+            background: var(--bg-body);
+        }
+        .kpi-value {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--secondary);
+            line-height: 1.1;
+        }
+        .kpi-footer {
+            font-size: 0.775rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .kpi-footer .highlight {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Nav Tabs Bar */
+        .tabs-nav {
+            display: flex;
+            gap: 0.5rem;
+            background: #ffffff;
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 0.65rem 1.15rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        .tab-btn:hover {
+            background: #f1f5f9;
+            color: var(--text-main);
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+        }
+
+        /* Tab Content Panes */
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Generic Card Container */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .card-title-group h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        .card-title-group p {
+            font-size: 0.825rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.15rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: inherit;
+        }
+        .btn:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            box-shadow: none;
+        }
+        .btn-sm {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+
+        /* Search & Filter Bar */
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .search-input {
+            padding: 0.55rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-family: inherit;
+            width: 280px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+
+        /* Data Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+        thead th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.04em;
+        }
+        tbody td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        tbody tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        /* Status & Enum Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: capitalize;
+        }
+        .badge-scheduled, .badge-pending, .badge-partial {
+            background: var(--warning-light);
+            color: #b45309;
+        }
+        .badge-completed, .badge-paid, .badge-available, .badge-active {
+            background: var(--success-light);
+            color: #15803d;
+        }
+        .badge-cancelled, .badge-occupied {
+            background: var(--danger-light);
+            color: #b91c1c;
+        }
+        .badge-admitted {
+            background: var(--purple-light);
+            color: #6b21a8;
+        }
+
+        /* Grid Layouts for Rooms */
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+        .room-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem;
+            background: #ffffff;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .room-card.occupied {
+            border-left: 5px solid var(--danger);
+            background: #fffdfd;
+        }
+        .room-card.available {
+            border-left: 5px solid var(--success);
+            background: #fdfffd;
+        }
+        .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .room-num {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--secondary);
+        }
+        .room-type {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .room-price {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 0.5rem;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: #ffffff;
+            border-radius: var(--radius);
+            max-width: 580px;
+            width: 100%;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalPop 0.2s ease-out;
+        }
+        @keyframes modalPop {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.35rem;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.6rem 0.85rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-family: inherit;
+            outline: none;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+
+        /* SQL Terminal Box */
+        .sql-terminal {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 1.25rem;
+            color: #f8fafc;
+            margin-bottom: 1rem;
+        }
+        .sql-terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        .sql-textarea {
+            width: 100%;
+            height: 95px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #38bdf8;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            padding: 0.75rem;
+            resize: vertical;
+            outline: none;
+        }
+        .sql-quick-queries {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.75rem;
+        }
+        .sql-pill {
+            background: #1e293b;
+            color: #cbd5e1;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border: 1px solid #334155;
+            transition: all 0.2s;
+        }
+        .sql-pill:hover {
+            background: #334155;
+            color: #ffffff;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            background: #ffffff;
+            border-top: 1px solid var(--border);
+            padding: 1.25rem 2rem;
+            text-align: center;
+            font-size: 0.825rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-inner">
+            <div class="brand">
+                <div class="brand-icon">⚕️</div>
+                <div class="brand-text">
+                    <h1>MedPulse HMS <span class="badge-rdbms">MySQL 8.0</span></h1>
+                    <p>Database Management Project for Hospital Operations</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="live-tag">
+                    <div class="pulse-dot"></div> Relational DB Active
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="resetToDefaultData()">↺ Reset Demo Data</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Top Metrics KPI Grid -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Total Patients</span>
+                    <span class="kpi-icon">👥</span>
+                </div>
+                <div class="kpi-value" id="kpiPatients">0</div>
+                <div class="kpi-footer">Active patient health records</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Doctors On Duty</span>
+                    <span class="kpi-icon">🩺</span>
+                </div>
+                <div class="kpi-value" id="kpiDoctors">0</div>
+                <div class="kpi-footer">Across <span class="highlight">5 clinical departments</span></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Scheduled Appts</span>
+                    <span class="kpi-icon">📅</span>
+                </div>
+                <div class="kpi-value" id="kpiAppointments">0</div>
+                <div class="kpi-footer">Outpatient clinic queues</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Bed Occupancy</span>
+                    <span class="kpi-icon">🛏️</span>
+                </div>
+                <div class="kpi-value" id="kpiOccupancy">0%</div>
+                <div class="kpi-footer"><span id="kpiBedsRatio" class="highlight">0/0</span> beds occupied</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Revenue Collected</span>
+                    <span class="kpi-icon">💵</span>
+                </div>
+                <div class="kpi-value" id="kpiRevenue">$0.00</div>
+                <div class="kpi-footer">Pending: <span id="kpiPending" class="highlight">$0.00</span></div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Overview Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('patients')">👥 Patients Directory</button>
+            <button class="tab-btn" onclick="switchTab('appointments')">📅 Appointments</button>
+            <button class="tab-btn" onclick="switchTab('doctors')">👨‍⚕️ Doctors & Staff</button>
+            <button class="tab-btn" onclick="switchTab('rooms')">🛏️ Rooms & Wards</button>
+            <button class="tab-btn" onclick="switchTab('billing')">💳 Billing & Invoices</button>
+            <button class="tab-btn" onclick="switchTab('sql')">💻 SQL Query Sandbox</button>
+        </div>
+
+        <!-- TAB: DASHBOARD OVERVIEW -->
+        <div id="tab-dashboard" class="tab-pane active">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+                <!-- Recent Appointments & Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title-group">
+                            <h2>Today's Outpatient Appointments</h2>
+                            <p>Real-time queue synchronized from appointments table</p>
+                        </div>
+                        <button class="btn btn-sm" onclick="openModal('modalAppointment')">+ Book Appt</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="dashApptTable">
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Department Breakdown -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title-group">
+                            <h2>Clinical Departments</h2>
+                            <p>Specialty ward distribution</p>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="dashDeptTable">
+                            <thead>
+                                <tr>
+                                    <th>Department</th>
+                                    <th>Location</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admitted Inpatients -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <h2>Currently Admitted In-Patients</h2>
+                        <p>Active ward room assignments & attending doctors</p>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table id="dashAdmissionsTable">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Blood</th>
+                                <th>Room Number</th>
+                                <th>Ward Type</th>
+                                <th>Admission Date</th>
+                                <th>Attending Doctor</th>
+                                <th>Diagnosis</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: PATIENTS DIRECTORY -->
+        <div id="tab-patients" class="tab-pane">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <h2>Patients Directory (EHR)</h2>
+                        <p>Complete demographic and emergency contact records</p>
+                    </div>
+                    <button class="btn" onclick="openModal('modalPatient')">+ Register New Patient</button>
+                </div>
+                <div class="table-toolbar">
+                    <input type="text" class="search-input" placeholder="🔍 Search patient by name or phone..." oninput="filterPatients(this.value)">
+                    <span style="font-size: 0.825rem; color: var(--text-muted);" id="patientsCountText">Showing records</span>
+                </div>
+                <div class="table-wrapper">
+                    <table id="patientsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Full Name</th>
+                                <th>DOB</th>
+                                <th>Gender</th>
+                                <th>Blood</th>
+                                <th>Phone</th>
+                                <th>Emergency Contact</th>
+                                <th>Address</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: APPOINTMENTS -->
+        <div id="tab-appointments" class="tab-pane">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <h2>Clinic Appointments Scheduling</h2>
+                        <p>Outpatient consultations schedule linked to doctors and departments</p>
+                    </div>
+                    <button class="btn" onclick="openModal('modalAppointment')">+ Book Appointment</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="appointmentsTable">
+                        <thead>
+                            <tr>
+                                <th>Appt ID</th>
+                                <th>Patient Name</th>
+                                <th>Doctor</th>
+                                <th>Department</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Reason</th>
+                                <th>Fee</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: DOCTORS & STAFF -->
+        <div id="tab-doctors" class="tab-pane">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <h2>Medical Doctors & Healthcare Staff</h2>
+                        <p>Roster of physicians, nurses, and administrative staff</p>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table id="doctorsTable">
+                        <thead>
+                            <tr>
+                                <th>Staff ID</th>
+                                <th>Full Name</th>
+                                <th>Role</th>
+                                <th>Specialization</th>
+                                <th>Department</th>
+                                <th>Contact Phone</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: ROOMS & WARDS -->
+        <div id="tab-rooms" class="tab-pane">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <h2>Ward & Bed Inventory</h2>
+                        <p>Real-time room occupancy status and daily charge rates</p>
+                    </div>
+                </div>
+                <div class="rooms-grid" id="roomsContainer"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <h2>Active In-Patient Admissions</h2>
+                        <p>Manage admitted patients and discharge processing</p>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table id="roomsAdmissionsTable">
+                        <thead>
+                            <tr>
+                                <th>Adm ID</th>
+                                <th>Patient</th>
+                                <th>Room</th>
+                                <th>Admission Date</th>
+                                <th>Attending Doctor</th>
+                                <th>Diagnosis</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: BILLING & INVOICES -->
+        <div id="tab-billing" class="tab-pane">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <h2>Hospital Billing & Accounts Receivable</h2>
+                        <p>Computed net billing with tax, discounts, and payment tracking</p>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table id="billingTable">
+                        <thead>
+                            <tr>
+                                <th>Bill #</th>
+                                <th>Patient Name</th>
+                                <th>Bill Date</th>
+                                <th>Subtotal</th>
+                                <th>Discount</th>
+                                <th>Tax</th>
+                                <th>Net Amount</th>
+                                <th>Paid</th>
+                                <th>Balance Due</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: SQL QUERY SANDBOX -->
+        <div id="tab-sql" class="tab-pane">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <h2>Interactive Relational SQL Console</h2>
+                        <p>Execute SQL queries against the local schema to inspect relationships & data</p>
+                    </div>
+                </div>
+
+                <div class="sql-terminal">
+                    <div class="sql-terminal-header">
+                        <span>mysql> hospital_db</span>
+                        <span>DIALECT: ANSI / MySQL 8.0</span>
+                    </div>
+                    <textarea id="sqlInput" class="sql-textarea" spellcheck="false">SELECT department_name, building, floor FROM departments;</textarea>
+                    
+                    <div class="sql-quick-queries">
+                        <span style="font-size: 0.75rem; color:#94a3b8; align-self: center;">Quick Queries:</span>
+                        <button class="sql-pill" onclick="setQuery('SELECT * FROM patients')">SELECT * FROM patients</button>
+                        <button class="sql-pill" onclick="setQuery('SELECT * FROM staff WHERE role=\'Doctor\'')">All Doctors</button>
+                        <button class="sql-pill" onclick="setQuery('SELECT * FROM rooms WHERE status=\'Available\'')">Available Rooms</button>
+                        <button class="sql-pill" onclick="setQuery('SELECT * FROM bills WHERE payment_status!=\'Paid\'')">Pending Bills</button>
+                    </div>
+
+                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                        <button class="btn btn-sm" onclick="runSandboxSql()">⚡ Execute SQL</button>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table id="sqlResultTable">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: REGISTER PATIENT -->
+    <div id="modalPatient" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Register New Patient</h3>
+                <button class="close-btn" onclick="closeModal('modalPatient')">&times;</button>
+            </div>
+            <form onsubmit="handleNewPatient(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" id="m_p_first" required placeholder="John">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" id="m_p_last" required placeholder="Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input type="date" id="m_p_dob" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="m_p_gender">
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Blood Group</label>
+                        <select id="m_p_blood">
+                            <option>O+</option><option>A+</option><option>B+</option><option>AB+</option>
+                            <option>O-</option><option>A-</option><option>B-</option><option>AB-</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="m_p_phone" required placeholder="+1-555-0199">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Residential Address</label>
+                        <input type="text" id="m_p_address" required placeholder="123 Main St, Springfield">
+                    </div>
+                    <div class="form-group">
+                        <label>Emergency Contact Name</label>
+                        <input type="text" id="m_p_em_name" required placeholder="Jane Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Emergency Phone</label>
+                        <input type="tel" id="m_p_em_phone" required placeholder="+1-555-0999">
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalPatient')">Cancel</button>
+                    <button type="submit" class="btn">Save & Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: BOOK APPOINTMENT -->
+    <div id="modalAppointment" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Schedule New Appointment</h3>
+                <button class="close-btn" onclick="closeModal('modalAppointment')">&times;</button>
+            </div>
+            <form onsubmit="handleNewAppointment(event)">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Select Patient</label>
+                        <select id="m_a_pid" required></select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Consulting Doctor</label>
+                        <select id="m_a_docid" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="m_a_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Time Slot</label>
+                        <input type="time" id="m_a_time" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Chief Complaint / Symptoms</label>
+                        <input type="text" id="m_a_reason" required placeholder="e.g. Follow-up consultation, fever, chest discomfort">
+                    </div>
+                    <div class="form-group">
+                        <label>Consultation Fee ($)</label>
+                        <input type="number" id="m_a_fee" value="500">
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalAppointment')">Cancel</button>
+                    <button type="submit" class="btn">Confirm Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: RECORD PAYMENT -->
+    <div id="modalPayment" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Process Bill Payment</h3>
+                <button class="close-btn" onclick="closeModal('modalPayment')">&times;</button>
+            </div>
+            <form onsubmit="handleRecordPayment(event)">
+                <input type="hidden" id="pay_bill_id">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Patient & Invoice</label>
+                        <div id="pay_bill_desc" style="font-weight: 700; color: var(--secondary); padding: 0.5rem 0;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Outstanding Amount ($)</label>
+                        <input type="text" id="pay_balance" readonly style="background: #f1f5f9; font-weight: 700;">
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Amount ($)</label>
+                        <input type="number" step="0.01" id="pay_amount" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Payment Channel</label>
+                        <select id="pay_method">
+                            <option>Credit Card</option>
+                            <option>Debit Card</option>
+                            <option>UPI</option>
+                            <option>Cash</option>
+                            <option>Insurance</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalPayment')">Cancel</button>
+                    <button type="submit" class="btn">Complete Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        Hospital Management System &bull; Database Operations Management Project &bull; MySQL / Relational Architecture
+    </footer>
+
+    <!-- Application Script (Local Database & State Management) -->
+    <script>
+        // Default Seed Data matching MySQL schema
+        const INITIAL_STATE = {
+            departments: [
+                { department_id: 1, department_name: 'Cardiology', building: 'Block A', floor: 2 },
+                { department_id: 2, department_name: 'Neurology', building: 'Block A', floor: 3 },
+                { department_id: 3, department_name: 'Orthopedics', building: 'Block B', floor: 1 },
+                { department_id: 4, department_name: 'Pediatrics', building: 'Block B', floor: 2 },
+                { department_id: 5, department_name: 'General Medicine', building: 'Block C', floor: 1 }
+            ],
+            staff: [
+                { staff_id: 1, first_name: 'Robert', last_name: 'Miller', role: 'Doctor', department_id: 1, specialization: 'Cardiologist', phone: '+1-555-0101', email: 'rmiller@hospital.org', status: 'Active' },
+                { staff_id: 2, first_name: 'Sarah', last_name: 'Jenkins', role: 'Doctor', department_id: 2, specialization: 'Neurologist', phone: '+1-555-0102', email: 'sjenkins@hospital.org', status: 'Active' },
+                { staff_id: 3, first_name: 'David', last_name: 'Kim', role: 'Doctor', department_id: 3, specialization: 'Orthopedic Surgeon', phone: '+1-555-0103', email: 'dkim@hospital.org', status: 'Active' },
+                { staff_id: 4, first_name: 'Emily', last_name: 'Chen', role: 'Doctor', department_id: 4, specialization: 'Pediatrician', phone: '+1-555-0104', email: 'echen@hospital.org', status: 'Active' },
+                { staff_id: 5, first_name: 'Marcus', last_name: 'Taylor', role: 'Doctor', department_id: 5, specialization: 'Internal Medicine', phone: '+1-555-0105', email: 'mtaylor@hospital.org', status: 'Active' },
+                { staff_id: 6, first_name: 'Jessica', last_name: 'Alvarez', role: 'Nurse', department_id: 1, specialization: 'Cardiac Care', phone: '+1-555-0106', email: 'jalvarez@hospital.org', status: 'Active' },
+                { staff_id: 7, first_name: 'Rachel', last_name: 'Green', role: 'Nurse', department_id: 4, specialization: 'Pediatric Care', phone: '+1-555-0107', email: 'rgreen@hospital.org', status: 'Active' },
+                { staff_id: 8, first_name: 'James', last_name: 'Wilson', role: 'Receptionist', department_id: 5, specialization: 'Front Desk', phone: '+1-555-0108', email: 'jwilson@hospital.org', status: 'Active' }
+            ],
+            patients: [
+                { patient_id: 1, first_name: 'Alice', last_name: 'Johnson', dob: '1985-04-12', gender: 'Female', blood_group: 'O+', phone: '+1-555-1101', address: '742 Evergreen Terr, Springfield', emergency_contact_name: 'Mark Johnson', emergency_contact_phone: '+1-555-9101' },
+                { patient_id: 2, first_name: 'Brian', last_name: 'Clark', dob: '1972-09-28', gender: 'Male', blood_group: 'A+', phone: '+1-555-1102', address: '124 Conch St, Springfield', emergency_contact_name: 'Linda Clark', emergency_contact_phone: '+1-555-9102' },
+                { patient_id: 3, first_name: 'Catherine', last_name: 'Davis', dob: '1995-12-03', gender: 'Female', blood_group: 'B-', phone: '+1-555-1103', address: '456 Oak Lane, Shelbyville', emergency_contact_name: 'Paul Davis', emergency_contact_phone: '+1-555-9103' },
+                { patient_id: 4, first_name: 'Daniel', last_name: 'Evans', dob: '1960-07-19', gender: 'Male', blood_group: 'AB+', phone: '+1-555-1104', address: '89 Elm Blvd, Capital City', emergency_contact_name: 'Martha Evans', emergency_contact_phone: '+1-555-9104' },
+                { patient_id: 5, first_name: 'Ella', last_name: 'White', dob: '2016-03-22', gender: 'Female', blood_group: 'O-', phone: '+1-555-1105', address: '321 Maple Ave, Springfield', emergency_contact_name: 'Susan White', emergency_contact_phone: '+1-555-9105' },
+                { patient_id: 6, first_name: 'Frank', last_name: 'Moore', dob: '1988-10-15', gender: 'Male', blood_group: 'A-', phone: '+1-555-1106', address: '654 Pine Rd, Ogdenville', emergency_contact_name: 'Grace Moore', emergency_contact_phone: '+1-555-9106' },
+                { patient_id: 7, first_name: 'Grace', last_name: 'Hall', dob: '1990-05-30', gender: 'Female', blood_group: 'B+', phone: '+1-555-1107', address: '15 Cedar Way, North Haverbrook', emergency_contact_name: 'Tom Hall', emergency_contact_phone: '+1-555-9107' },
+                { patient_id: 8, first_name: 'Henry', last_name: 'Baker', dob: '1955-01-14', gender: 'Male', blood_group: 'O+', phone: '+1-555-1108', address: '78 Birch Ct, Springfield', emergency_contact_name: 'Alice Baker', emergency_contact_phone: '+1-555-9108' }
+            ],
+            rooms: [
+                { room_id: 101, room_number: 'R-101', room_type: 'General', daily_rate: 150.0, status: 'Available' },
+                { room_id: 102, room_number: 'R-102', room_type: 'General', daily_rate: 150.0, status: 'Occupied' },
+                { room_id: 201, room_number: 'R-201', room_type: 'Semi-Private', daily_rate: 300.0, status: 'Available' },
+                { room_id: 202, room_number: 'R-202', room_type: 'Semi-Private', daily_rate: 300.0, status: 'Occupied' },
+                { room_id: 301, room_number: 'R-301', room_type: 'Private', daily_rate: 600.0, status: 'Occupied' },
+                { room_id: 401, room_number: 'ICU-1', room_type: 'ICU', daily_rate: 1500.0, status: 'Available' }
+            ],
+            admissions: [
+                { admission_id: 1, patient_id: 2, room_id: 102, attending_doctor_id: 1, admission_date: '2025-04-01 10:30', diagnosis: 'Mild Myocardial Infarction', status: 'Discharged' },
+                { admission_id: 2, patient_id: 4, room_id: 301, attending_doctor_id: 3, admission_date: '2025-04-06 08:15', diagnosis: 'Fractured Femur Post-Surgery', status: 'Admitted' },
+                { admission_id: 3, patient_id: 8, room_id: 202, attending_doctor_id: 2, admission_date: '2025-04-08 16:45', diagnosis: 'Ischemic Stroke Monitoring', status: 'Admitted' }
+            ],
+            appointments: [
+                { appointment_id: 1, patient_id: 1, doctor_id: 1, appointment_date: '2025-04-10', appointment_time: '09:00', reason: 'Routine Cardiac Checkup', consultation_fee: 500.0, status: 'Completed' },
+                { appointment_id: 2, patient_id: 3, doctor_id: 3, appointment_date: '2025-04-10', appointment_time: '10:30', reason: 'Knee Joint Pain Consultation', consultation_fee: 450.0, status: 'Completed' },
+                { appointment_id: 3, patient_id: 5, doctor_id: 4, appointment_date: '2025-04-10', appointment_time: '11:15', reason: 'Pediatric Vaccination & Wellness', consultation_fee: 350.0, status: 'Completed' },
+                { appointment_id: 4, patient_id: 6, doctor_id: 5, appointment_date: '2025-04-11', appointment_time: '09:30', reason: 'Persistent Fever & Fatigue', consultation_fee: 400.0, status: 'Scheduled' },
+                { appointment_id: 5, patient_id: 7, doctor_id: 2, appointment_date: '2025-04-11', appointment_time: '14:00', reason: 'Chronic Migraine Assessment', consultation_fee: 550.0, status: 'Scheduled' },
+                { appointment_id: 6, patient_id: 1, doctor_id: 1, appointment_date: '2025-04-15', appointment_time: '11:00', reason: 'Follow-up ECG Review', consultation_fee: 500.0, status: 'Scheduled' },
+                { appointment_id: 7, patient_id: 3, doctor_id: 5, appointment_date: '2025-04-08', appointment_time: '15:30', reason: 'General Health Screening', consultation_fee: 400.0, status: 'Cancelled' }
+            ],
+            bills: [
+                { bill_id: 1, patient_id: 1, total_amount: 500.0, discount: 50.0, tax: 22.5, net_amount: 472.5, paid_amount: 472.5, payment_status: 'Paid', bill_date: '2025-04-10' },
+                { bill_id: 2, patient_id: 3, total_amount: 450.0, discount: 0.0, tax: 22.5, net_amount: 472.5, paid_amount: 472.5, payment_status: 'Paid', bill_date: '2025-04-10' },
+                { bill_id: 3, patient_id: 5, total_amount: 350.0, discount: 0.0, tax: 17.5, net_amount: 367.5, paid_amount: 0.0, payment_status: 'Pending', bill_date: '2025-04-10' },
+                { bill_id: 4, patient_id: 2, total_amount: 3200.0, discount: 200.0, tax: 150.0, net_amount: 3150.0, paid_amount: 3150.0, payment_status: 'Paid', bill_date: '2025-04-05' },
+                { bill_id: 5, patient_id: 4, total_amount: 4500.0, discount: 300.0, tax: 210.0, net_amount: 4410.0, paid_amount: 2000.0, payment_status: 'Partial', bill_date: '2025-04-09' }
+            ]
+        };
+
+        // State Manager
+        let DB = {};
+        function loadState() {
+            const saved = localStorage.getItem('hospital_db_state');
+            if (saved) {
+                try { DB = JSON.parse(saved); } catch(e) { DB = JSON.parse(JSON.stringify(INITIAL_STATE)); }
+            } else {
+                DB = JSON.parse(JSON.stringify(INITIAL_STATE));
+                saveState();
+            }
+        }
+        function saveState() {
+            localStorage.setItem('hospital_db_state', JSON.stringify(DB));
+            renderAll();
+        }
+        function resetToDefaultData() {
+            if (confirm("Reset all hospital data to default initial state?")) {
+                DB = JSON.parse(JSON.stringify(INITIAL_STATE));
+                saveState();
+            }
+        }
+
+        // Helpers
+        function getPatientName(id) {
+            const p = DB.patients.find(x => x.patient_id === id);
+            return p ? `${p.first_name} ${p.last_name}` : `Patient #${id}`;
+        }
+        function getDoctorName(id) {
+            const d = DB.staff.find(x => x.staff_id === id);
+            return d ? `Dr. ${d.first_name} ${d.last_name}` : `Staff #${id}`;
+        }
+        function getDeptName(id) {
+            const d = DB.departments.find(x => x.department_id === id);
+            return d ? d.department_name : 'General';
+        }
+        function getRoom(id) {
+            return DB.rooms.find(x => x.room_id === id);
+        }
+
+        // Render Functions
+        function renderAll() {
+            renderKPIs();
+            renderDashboard();
+            renderPatients(DB.patients);
+            renderAppointments();
+            renderDoctors();
+            renderRooms();
+            renderBilling();
+            populateFormDropdowns();
+        }
+
+        function renderKPIs() {
+            const patientsCount = DB.patients.length;
+            const docsCount = DB.staff.filter(s => s.role === 'Doctor').length;
+            const apptsScheduled = DB.appointments.filter(a => a.status === 'Scheduled').length;
+            const totalRooms = DB.rooms.length;
+            const occupiedRooms = DB.rooms.filter(r => r.status === 'Occupied').length;
+            const occPct = totalRooms ? Math.round((occupiedRooms / totalRooms) * 100) : 0;
+            
+            const totalCollected = DB.bills.reduce((sum, b) => sum + (b.paid_amount || 0), 0);
+            const totalPending = DB.bills.reduce((sum, b) => sum + Math.max(0, b.net_amount - (b.paid_amount || 0)), 0);
+
+            document.getElementById('kpiPatients').innerText = patientsCount;
+            document.getElementById('kpiDoctors').innerText = docsCount;
+            document.getElementById('kpiAppointments').innerText = apptsScheduled;
+            document.getElementById('kpiOccupancy').innerText = `${occPct}%`;
+            document.getElementById('kpiBedsRatio').innerText = `${occupiedRooms}/${totalRooms}`;
+            document.getElementById('kpiRevenue').innerText = `$${totalCollected.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('kpiPending').innerText = `$${totalPending.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        }
+
+        function renderDashboard() {
+            // Dashboard Appts
+            const apptBody = document.querySelector('#dashApptTable tbody');
+            const recentAppts = DB.appointments.slice(0, 5);
+            apptBody.innerHTML = recentAppts.map(a => `
+                <tr>
+                    <td><strong>${getPatientName(a.patient_id)}</strong></td>
+                    <td>${getDoctorName(a.doctor_id)}</td>
+                    <td>${a.appointment_date} ${a.appointment_time}</td>
+                    <td><span class="badge badge-${a.status.toLowerCase()}">${a.status}</span></td>
+                </tr>
+            `).join('');
+
+            // Dashboard Depts
+            const deptBody = document.querySelector('#dashDeptTable tbody');
+            deptBody.innerHTML = DB.departments.map(d => `
+                <tr>
+                    <td><strong>${d.department_name}</strong></td>
+                    <td>${d.building}, Floor ${d.floor}</td>
+                </tr>
+            `).join('');
+
+            // Dashboard Admissions
+            const admBody = document.querySelector('#dashAdmissionsTable tbody');
+            const activeAdms = DB.admissions.filter(a => a.status === 'Admitted');
+            admBody.innerHTML = activeAdms.map(adm => {
+                const room = getRoom(adm.room_id);
+                const patient = DB.patients.find(p => p.patient_id === adm.patient_id);
+                return `
+                    <tr>
+                        <td><strong>${getPatientName(adm.patient_id)}</strong></td>
+                        <td><span style="font-weight:700; color:var(--primary);">${patient ? patient.blood_group : ''}</span></td>
+                        <td><strong>${room ? room.room_number : ''}</strong></td>
+                        <td>${room ? room.room_type : ''}</td>
+                        <td>${adm.admission_date}</td>
+                        <td>${getDoctorName(adm.attending_doctor_id)}</td>
+                        <td>${adm.diagnosis}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderPatients(patientsList) {
+            const tbody = document.querySelector('#patientsTable tbody');
+            document.getElementById('patientsCountText').innerText = `Showing ${patientsList.length} patient records`;
+            tbody.innerHTML = patientsList.map(p => `
+                <tr>
+                    <td><strong>#${p.patient_id}</strong></td>
+                    <td><strong>${p.first_name} ${p.last_name}</strong></td>
+                    <td>${p.dob}</td>
+                    <td>${p.gender}</td>
+                    <td><span style="font-weight:700; color:var(--primary);">${p.blood_group}</span></td>
+                    <td>${p.phone}</td>
+                    <td>${p.emergency_contact_name} (${p.emergency_contact_phone})</td>
+                    <td>${p.address}</td>
+                </tr>
+            `).join('');
+        }
+
+        function filterPatients(query) {
+            const q = query.toLowerCase().trim();
+            if (!q) { renderPatients(DB.patients); return; }
+            const filtered = DB.patients.filter(p => 
+                p.first_name.toLowerCase().includes(q) ||
+                p.last_name.toLowerCase().includes(q) ||
+                p.phone.includes(q) ||
+                p.blood_group.toLowerCase().includes(q)
+            );
+            renderPatients(filtered);
+        }
+
+        function renderAppointments() {
+            const tbody = document.querySelector('#appointmentsTable tbody');
+            tbody.innerHTML = DB.appointments.map(a => {
+                const doc = DB.staff.find(s => s.staff_id === a.doctor_id);
+                const deptName = doc ? getDeptName(doc.department_id) : 'General';
+                return `
+                    <tr>
+                        <td><strong>#${a.appointment_id}</strong></td>
+                        <td><strong>${getPatientName(a.patient_id)}</strong></td>
+                        <td>${getDoctorName(a.doctor_id)}</td>
+                        <td>${deptName}</td>
+                        <td>${a.appointment_date}</td>
+                        <td>${a.appointment_time}</td>
+                        <td>${a.reason}</td>
+                        <td>$${a.consultation_fee.toFixed(2)}</td>
+                        <td><span class="badge badge-${a.status.toLowerCase()}">${a.status}</span></td>
+                        <td>
+                            ${a.status === 'Scheduled' ? `
+                                <button class="btn btn-sm" onclick="completeAppt(${a.appointment_id})">Complete</button>
+                                <button class="btn btn-secondary btn-sm" onclick="cancelAppt(${a.appointment_id})">Cancel</button>
+                            ` : '<span style="color:var(--text-muted); font-size:0.75rem;">Done</span>'}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function completeAppt(id) {
+            const appt = DB.appointments.find(a => a.appointment_id === id);
+            if (appt) {
+                appt.status = 'Completed';
+                // Check if bill exists
+                const billId = DB.bills.length + 1;
+                DB.bills.push({
+                    bill_id: billId,
+                    patient_id: appt.patient_id,
+                    total_amount: appt.consultation_fee,
+                    discount: 0,
+                    tax: Number((appt.consultation_fee * 0.05).toFixed(2)),
+                    net_amount: Number((appt.consultation_fee * 1.05).toFixed(2)),
+                    paid_amount: 0,
+                    payment_status: 'Pending',
+                    bill_date: new Date().toISOString().split('T')[0]
+                });
+                saveState();
+            }
+        }
+
+        function cancelAppt(id) {
+            const appt = DB.appointments.find(a => a.appointment_id === id);
+            if (appt) {
+                appt.status = 'Cancelled';
+                saveState();
+            }
+        }
+
+        function renderDoctors() {
+            const tbody = document.querySelector('#doctorsTable tbody');
+            tbody.innerHTML = DB.staff.map(s => `
+                <tr>
+                    <td><strong>#${s.staff_id}</strong></td>
+                    <td><strong>${s.role === 'Doctor' ? 'Dr. ' : ''}${s.first_name} ${s.last_name}</strong></td>
+                    <td>${s.role}</td>
+                    <td>${s.specialization || 'General'}</td>
+                    <td>${getDeptName(s.department_id)}</td>
+                    <td>${s.phone}</td>
+                    <td>${s.email}</td>
+                    <td><span class="badge badge-active">${s.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderRooms() {
+            const container = document.getElementById('roomsContainer');
+            container.innerHTML = DB.rooms.map(r => `
+                <div class="room-card ${r.status.toLowerCase()}">
+                    <div class="room-header">
+                        <span class="room-num">${r.room_number}</span>
+                        <span class="badge badge-${r.status.toLowerCase()}">${r.status}</span>
+                    </div>
+                    <div class="room-type">${r.room_type} Ward</div>
+                    <div class="room-price">$${r.daily_rate.toFixed(2)} <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/ day</span></div>
+                </div>
+            `).join('');
+
+            const tbody = document.querySelector('#roomsAdmissionsTable tbody');
+            tbody.innerHTML = DB.admissions.map(adm => {
+                const room = getRoom(adm.room_id);
+                return `
+                    <tr>
+                        <td><strong>#${adm.admission_id}</strong></td>
+                        <td><strong>${getPatientName(adm.patient_id)}</strong></td>
+                        <td>${room ? room.room_number : ''} (${room ? room.room_type : ''})</td>
+                        <td>${adm.admission_date}</td>
+                        <td>${getDoctorName(adm.attending_doctor_id)}</td>
+                        <td>${adm.diagnosis}</td>
+                        <td><span class="badge badge-${adm.status.toLowerCase()}">${adm.status}</span></td>
+                        <td>
+                            ${adm.status === 'Admitted' ? `
+                                <button class="btn btn-sm btn-secondary" onclick="dischargePatient(${adm.admission_id})">Discharge Patient</button>
+                            ` : '<span style="color:var(--text-muted); font-size:0.75rem;">Discharged</span>'}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function dischargePatient(admId) {
+            const adm = DB.admissions.find(a => a.admission_id === admId);
+            if (adm) {
+                adm.status = 'Discharged';
+                const room = getRoom(adm.room_id);
+                if (room) room.status = 'Available';
+                saveState();
+            }
+        }
+
+        function renderBilling() {
+            const tbody = document.querySelector('#billingTable tbody');
+            tbody.innerHTML = DB.bills.map(b => {
+                const balance = Math.max(0, b.net_amount - (b.paid_amount || 0));
+                return `
+                    <tr>
+                        <td><strong>#${b.bill_id}</strong></td>
+                        <td><strong>${getPatientName(b.patient_id)}</strong></td>
+                        <td>${b.bill_date}</td>
+                        <td>$${b.total_amount.toFixed(2)}</td>
+                        <td>$${b.discount.toFixed(2)}</td>
+                        <td>$${b.tax.toFixed(2)}</td>
+                        <td><strong>$${b.net_amount.toFixed(2)}</strong></td>
+                        <td>$${(b.paid_amount || 0).toFixed(2)}</td>
+                        <td style="font-weight:700; color:${balance > 0 ? 'var(--danger)' : 'var(--success)'};">$${balance.toFixed(2)}</td>
+                        <td><span class="badge badge-${b.payment_status.toLowerCase()}">${b.payment_status}</span></td>
+                        <td>
+                            ${b.payment_status !== 'Paid' ? `
+                                <button class="btn btn-sm" onclick="openPaymentModal(${b.bill_id})">Pay Now</button>
+                            ` : '<span style="color:var(--success); font-weight:700; font-size:0.8rem;">✓ Cleared</span>'}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function populateFormDropdowns() {
+            const pSelect = document.getElementById('m_a_pid');
+            if (pSelect) {
+                pSelect.innerHTML = DB.patients.map(p => `
+                    <option value="${p.patient_id}">${p.first_name} ${p.last_name} (#${p.patient_id})</option>
+                `).join('');
+            }
+
+            const docSelect = document.getElementById('m_a_docid');
+            if (docSelect) {
+                const docs = DB.staff.filter(s => s.role === 'Doctor');
+                docSelect.innerHTML = docs.map(d => `
+                    <option value="${d.staff_id}">Dr. ${d.first_name} ${d.last_name} (${d.specialization})</option>
+                `).join('');
+            }
+        }
+
+        // Action Handlers
+        function handleNewPatient(e) {
+            e.preventDefault();
+            const newId = DB.patients.length > 0 ? Math.max(...DB.patients.map(p => p.patient_id)) + 1 : 1;
+            const newPatient = {
+                patient_id: newId,
+                first_name: document.getElementById('m_p_first').value.trim(),
+                last_name: document.getElementById('m_p_last').value.trim(),
+                dob: document.getElementById('m_p_dob').value,
+                gender: document.getElementById('m_p_gender').value,
+                blood_group: document.getElementById('m_p_blood').value,
+                phone: document.getElementById('m_p_phone').value.trim(),
+                address: document.getElementById('m_p_address').value.trim(),
+                emergency_contact_name: document.getElementById('m_p_em_name').value.trim(),
+                emergency_contact_phone: document.getElementById('m_p_em_phone').value.trim()
+            };
+            DB.patients.unshift(newPatient);
+            saveState();
+            closeModal('modalPatient');
+            alert(`Patient registered successfully! Assigned Patient ID: #${newId}`);
+        }
+
+        function handleNewAppointment(e) {
+            e.preventDefault();
+            const newId = DB.appointments.length > 0 ? Math.max(...DB.appointments.map(a => a.appointment_id)) + 1 : 1;
+            const newAppt = {
+                appointment_id: newId,
+                patient_id: parseInt(document.getElementById('m_a_pid').value),
+                doctor_id: parseInt(document.getElementById('m_a_docid').value),
+                appointment_date: document.getElementById('m_a_date').value,
+                appointment_time: document.getElementById('m_a_time').value,
+                reason: document.getElementById('m_a_reason').value.trim(),
+                consultation_fee: parseFloat(document.getElementById('m_a_fee').value || 500),
+                status: 'Scheduled'
+            };
+            DB.appointments.unshift(newAppt);
+            saveState();
+            closeModal('modalAppointment');
+            alert(`Appointment #${newId} booked successfully!`);
+        }
+
+        function openPaymentModal(billId) {
+            const bill = DB.bills.find(b => b.bill_id === billId);
+            if (!bill) return;
+            const balance = Math.max(0, bill.net_amount - (bill.paid_amount || 0));
+            document.getElementById('pay_bill_id').value = billId;
+            document.getElementById('pay_bill_desc').innerText = `Bill #${bill.bill_id} - ${getPatientName(bill.patient_id)}`;
+            document.getElementById('pay_balance').value = balance.toFixed(2);
+            document.getElementById('pay_amount').value = balance.toFixed(2);
+            openModal('modalPayment');
+        }
+
+        function handleRecordPayment(e) {
+            e.preventDefault();
+            const billId = parseInt(document.getElementById('pay_bill_id').value);
+            const amount = parseFloat(document.getElementById('pay_amount').value);
+            const bill = DB.bills.find(b => b.bill_id === billId);
+            if (bill) {
+                bill.paid_amount = (bill.paid_amount || 0) + amount;
+                if (bill.paid_amount >= bill.net_amount) {
+                    bill.payment_status = 'Paid';
+                } else if (bill.paid_amount > 0) {
+                    bill.payment_status = 'Partial';
+                }
+                saveState();
+                closeModal('modalPayment');
+                alert(`Payment of $${amount.toFixed(2)} successfully recorded for Bill #${billId}!`);
+            }
+        }
+
+        // SQL Sandbox Engine
+        function setQuery(sql) {
+            document.getElementById('sqlInput').value = sql;
+            runSandboxSql();
+        }
+
+        function runSandboxSql() {
+            const sql = document.getElementById('sqlInput').value.trim().toLowerCase();
+            const thead = document.querySelector('#sqlResultTable thead');
+            const tbody = document.querySelector('#sqlResultTable tbody');
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+
+            let data = [];
+            if (sql.includes('from patients')) data = DB.patients;
+            else if (sql.includes('from staff') || sql.includes('doctor')) data = DB.staff.filter(s => sql.includes('doctor') ? s.role === 'Doctor' : true);
+            else if (sql.includes('from departments')) data = DB.departments;
+            else if (sql.includes('from rooms')) data = DB.rooms.filter(r => sql.includes('available') ? r.status === 'Available' : true);
+            else if (sql.includes('from appointments')) data = DB.appointments;
+            else if (sql.includes('from admissions')) data = DB.admissions;
+            else if (sql.includes('from bills')) data = DB.bills.filter(b => sql.includes('paid') ? b.payment_status !== 'Paid' : true);
+            else {
+                tbody.innerHTML = `<tr><td style="color:var(--warning); padding:1rem;">Table query evaluated. Displaying current schema tables: departments, staff, patients, appointments, rooms, admissions, bills.</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td style="color:var(--text-muted); padding:1rem;">0 rows returned.</td></tr>`;
+                return;
+            }
+
+            const keys = Object.keys(data[0]);
+            thead.innerHTML = `<tr>${keys.map(k => `<th>${k}</th>`).join('')}</tr>`;
+            tbody.innerHTML = data.map(row => `
+                <tr>${keys.map(k => `<td>${row[k] !== undefined ? row[k] : 'NULL'}</td>`).join('')}</tr>
+            `).join('');
+        }
+
+        // Tab Navigation
+        function switchTab(name) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById('tab-' + name).classList.add('active');
+        }
+
+        // Modal Controls
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Init on load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            // Default date field to today
+            const today = new Date().toISOString().split('T')[0];
+            const apptDateInput = document.getElementById('m_a_date');
+            if (apptDateInput) apptDateInput.value = today;
+        });
+    </script>
+</body>
+</html>
